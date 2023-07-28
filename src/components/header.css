@@ -1,0 +1,17 @@
+.header {
+  border: 1px black solid;
+  width: 100vw;
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+}
+
+.logo {
+  width: 200px;
+  padding: 10px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+}
