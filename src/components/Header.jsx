@@ -1,12 +1,15 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const location = useLocation();
-  console.log(location.pathname);
+  const navigate = useNavigate();
 
-  // write function if route === location.pathname return true
-  // else return false
+  function pathNameRoute(route) {
+    if (route === location.pathname) {
+      return true;
+    }
+  }
 
   return (
     <div className="bg-white border-b shadow-sm sticky top-0">
@@ -16,18 +19,44 @@ export default function Header() {
             src="https://static.rdc.moveaws.com/images/logos/rdc-logo-default.svg"
             alt="logo"
             className="h-8 cursor-pointer"
+            onClick={() => navigate('/')}
           />
         </div>
         <div>
           <ul className="flex space-x-10">
             <li
-              className={`py-3 text-sm font-semibold text-grey-400 border-b-[3px] border-b-transparent`}
+              className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent cursor-pointer ${
+                pathNameRoute('/') && 'text-black border-b-red-500'
+              }`}
+              onClick={() => navigate('/')}
             >
-              About
+              Home
             </li>
-            <li>Offers</li>
-            <li>Profile</li>
-            <li>Sign in</li>
+
+            <li
+              className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent cursor-pointer ${
+                pathNameRoute('/offers') && 'text-black border-b-red-500'
+              }`}
+              onClick={() => navigate('/offers')}
+            >
+              Offers
+            </li>
+            <li
+              className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent cursor-pointer ${
+                pathNameRoute('/profile') && 'text-black border-b-red-500'
+              }`}
+              onClick={() => navigate('/profile')}
+            >
+              Profile
+            </li>
+            <li
+              className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent cursor-pointer ${
+                pathNameRoute('/signIn') && 'text-black border-b-red-500'
+              }`}
+              onClick={() => navigate('/signIn')}
+            >
+              Sign in
+            </li>
           </ul>
         </div>
       </header>
