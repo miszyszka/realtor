@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { AiOutlineEyeInvisible, AiOutlineEye } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-
   const { email, password } = formData;
 
   function onChange(e) {
@@ -18,6 +20,24 @@ export default function SignIn() {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredentioal = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredentioal.user) {
+        navigate('/');
+        toast.success('Login Successful');
+      }
+    } catch {
+      toast.error('invalid log in data');
+    }
   }
 
   return (
@@ -33,7 +53,7 @@ export default function SignIn() {
         </div>
 
         <div className="w-full md:w-[70%] lg:w-[40%] lg:ml-20" input="text">
-          <form>
+          <form onSubmit={onSubmit}>
             {/* MAIL INPUT */}
             <div>
               <input

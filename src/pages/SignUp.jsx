@@ -2,17 +2,25 @@ import React, { useState } from 'react';
 import { AiOutlineEyeInvisible, AiOutlineEye } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from 'firebase/auth';
+import { db } from '../firebase';
+import { serverTimestamp, setDoc, doc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   });
-
   const { name, email, password } = formData;
+  const navigate = useNavigate();
 
   function onChange(e) {
     setFormData((prevState) => ({
@@ -21,6 +29,33 @@ export default function SignUp() {
     }));
   }
 
+  async function onSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const user = userCredential.user;
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, 'users', user.uid), formDataCopy);
+      navigate('/');
+      toast.success('Account created successfully');
+
+      console.log(user);
+    } catch (error) {
+      toast.error('sth went wrong');
+    }
+  }
   return (
     <section>
       <h1 className="text-3xl text-center mt-6 font-bold">Sign Up</h1>
@@ -34,7 +69,7 @@ export default function SignUp() {
         </div>
 
         <div className="w-full md:w-[70%] lg:w-[40%] lg:ml-20" input="text">
-          <form>
+          <form onSubmit={onSubmit}>
             {/* NAME INPUT */}
             <div>
               <input
